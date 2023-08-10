@@ -1,0 +1,76 @@
+name: Release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          override: true
+          toolchain: stable
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Rename binary
+        run: mv target/release/shire target/release/shire-linux-amd64
+
+      - name: Upload Assets to Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: target/release/shire-linux-amd64
+
+  build-mac:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          override: true
+          toolchain: stable
+          target: x86_64-apple-darwin
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Rename binary
+        run: mv target/release/shire target/release/shire-darwin
+
+      - name: Upload Assets to Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: target/release/shire-darwin
+
+  build-windows:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          default: true
+          override: true
+          toolchain: stable
+
+      - name: Build
+        run: cargo build --release
+
+      - name: Upload Assets to Release
+        uses: softprops/action-gh-release@v0.1.15
+        with:
+          files: target/release/shire.exe

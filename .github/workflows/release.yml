@@ -30,7 +30,7 @@ jobs:
           files: target/release/shire-linux-amd64
 
   build-mac:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3
@@ -55,7 +55,7 @@ jobs:
           files: target/release/shire-darwin
 
   build-windows:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v3

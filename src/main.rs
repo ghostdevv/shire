@@ -25,20 +25,22 @@ struct Args {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
+    println!("Fetching record data...");
     let records = records::get_records(&args.zone_id, &args.key).await?;
+
+    println!("Resolving IPv4 address...");
     let ip = ip::get_ip().await?;
 
+    println!("Updating records...");
     for record_name in args.records {
         let record_id = records
             .get(&record_name)
-            .expect(&format!("Unable to find record '{}'", record_name));
+            .expect(&format!("Unable to find record \"{}\"", record_name));
 
+        println!("  Updating \"{}\" with ip \"{}\"", record_name, ip);
         records::set_ip(&args.zone_id, &record_id, &ip, &args.key).await?;
-
-        println!("Updating record '{}'", record_name);
     }
 
-    println!("{:?}", records);
-
+    println!("Done!");
     Ok(())
 }

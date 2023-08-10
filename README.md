@@ -13,7 +13,8 @@ If you're using linux you can use the following command to install it easily:
 ```bash
 curl -sL -o shire https://github.com/ghostdevv/shire/releases/latest/download/shire-linux-amd64 \
   && chmod +x shire \
-  && sudo mv shire /usr/local/bin
+  && sudo mv shire /usr/local/bin \
+  && sudo chown root:root /usr/local/bin/shire
 ```
 
 ## Usage
@@ -36,7 +37,9 @@ Options:
 
 Shire is intended to be run as a cron job on linux, here is an example cron configuration:
 
-@TODO
+```
+0 0 * * * /bin/bash /usr/local/bin/shire -k CF_API_KEY -z ZONE_ID -r RECORDS
+```
 
 ### Example
 

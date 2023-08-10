@@ -51,7 +51,17 @@ shire --key CF_API_KEY --zone-id bab32631af40d574ag246741013k40z3 --records test
 shire -k CF_API_KEY -z bab32631af40d574ag246741013k40z3 -r test
 ```
 
-## Zone Id
+## Configuration
+
+### Cloudflare API Key
+
+You can generate an API Key by visiting the [Cloudflare Dashboard](https://dash.cloudflare.com/profile/api-tokens). Once you click the "Create Token" button, if available click the "Edit zone DNS" template, and then fill in similar to this:
+
+![](./.github/cloudflare-api-key.webp)
+
+Add as many zones as you are using with shire, or allow access to all zones. 
+
+### Zone Id
 
 To get your Zone's Id visit your domain on the [Cloudflare Dashboard](https://dash.cloudflare.com?to=/:account/:zone). Click on the "Overview" tab, and scroll until you see the "API" on the right side of the page. You can then click to copy your Zone Id.
 

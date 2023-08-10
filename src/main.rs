@@ -25,6 +25,11 @@ struct Args {
 async fn main() -> Result<()> {
     let args = Args::parse();
 
+    if args.records.is_empty() {
+        println!("No records specified, exiting...");
+        return Ok(());
+    }
+
     println!("Fetching record data...");
     let records = records::get_records(&args.zone_id, &args.key).await?;
 

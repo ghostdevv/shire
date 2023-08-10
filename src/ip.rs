@@ -1,6 +1,6 @@
-use reqwest::Error;
+use color_eyre::eyre::Result;
 
-pub async fn get_ip() -> Result<String, Error> {
+pub async fn get_ip() -> Result<String> {
     let client = reqwest::Client::new();
 
     let response = client

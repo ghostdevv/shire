@@ -1,4 +1,4 @@
-use reqwest::Error;
+use color_eyre::eyre::Result;
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -14,7 +14,7 @@ struct RecordResponse {
     result: Vec<Record>,
 }
 
-pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, String>, Error> {
+pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, String>> {
     let endpoint = format!(
         "https://api.cloudflare.com/client/v4/zones/{}/dns_records?type=A",
         zone_id
@@ -46,7 +46,7 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
     Ok(map)
 }
 
-pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Result<(), Error> {
+pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Result<()> {
     let endpoint = format!(
         "https://api.cloudflare.com/client/v4/zones/{}/dns_records/{}",
         zone_id, record_id

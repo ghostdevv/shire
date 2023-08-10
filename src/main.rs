@@ -1,4 +1,5 @@
 use clap::Parser;
+use color_eyre::eyre::Result;
 
 mod ip;
 mod records;
@@ -21,26 +22,23 @@ struct Args {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
     let args = Args::parse();
 
-    let records = records::get_records(&args.zone_id, &args.key)
-        .await
-        .expect("Failed to get records");
-
-    let ip = ip::get_ip().await.expect("Failed to get IP");
+    let records = records::get_records(&args.zone_id, &args.key).await?;
+    let ip = ip::get_ip().await?;
 
     for record_name in args.records {
         let record_id = records
             .get(&record_name)
             .expect(&format!("Unable to find record '{}'", record_name));
 
-        records::set_ip(&args.zone_id, &record_id, &ip, &args.key)
-            .await
-            .expect("Failed to set IP");
+        records::set_ip(&args.zone_id, &record_id, &ip, &args.key).await?;
 
         println!("Updating record '{}'", record_name);
     }
 
     println!("{:?}", records);
+
+    Ok(())
 }

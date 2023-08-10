@@ -14,7 +14,7 @@ struct Args {
     )]
     records: Vec<String>,
 
-    #[arg(long, short, help = "The Cloudflare Zone ID for your domain")]
+    #[arg(long, short, help = "The Cloudflare Zone Id for your domain")]
     zone_id: String,
 
     #[arg(long, short, help = "Your Cloudflare API key")]

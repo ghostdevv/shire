@@ -1,10 +1,10 @@
 use color_eyre::eyre::Result;
 
-pub async fn get_ip() -> Result<String> {
+pub async fn get_ip(resolver: &str) -> Result<String> {
     let client = reqwest::Client::new();
 
     let ip = client
-        .get("https://ip.willow.sh")
+        .get(resolver)
         .send()
         .await?
         .text()

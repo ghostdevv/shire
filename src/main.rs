@@ -19,6 +19,14 @@ struct Args {
 
     #[arg(long, short, help = "Your Cloudflare API key")]
     key: String,
+
+    #[arg(
+        long,
+        short,
+        default_value = "https://ip.willow.sh",
+        help = "The IP resolver url to use"
+    )]
+    ip_resolver: String,
 }
 
 #[tokio::main]
@@ -34,7 +42,7 @@ async fn main() -> Result<()> {
     let records = records::get_records(&args.zone_id, &args.key).await?;
 
     println!("Resolving IPv4 address...");
-    let ip = ip::get_ip().await?;
+    let ip = ip::get_ip(&args.ip_resolver).await?;
 
     println!("Updating records...");
     for record_name in args.records {

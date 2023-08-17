@@ -26,11 +26,12 @@ Shire is a simple no fuss ddns client for Cloudflare
 Usage: shire [OPTIONS] --zone-id <ZONE_ID> --key <KEY>
 
 Options:
-  -r, --records <RECORDS>  Comma seperated list of the record names to update
-  -z, --zone-id <ZONE_ID>  The Cloudflare Zone Id for your domain
-  -k, --key <KEY>          Your Cloudflare API key
-  -h, --help               Print help
-  -V, --version            Print version
+  -r, --records <RECORDS>          Comma seperated list of the record names to update
+  -z, --zone-id <ZONE_ID>          The Cloudflare Zone Id for your domain
+  -k, --key <KEY>                  Your Cloudflare API key
+  -i, --ip-resolver <IP_RESOLVER>  The IP resolver url to use, this defaults to ip.willow.sh [default: https://ip.willow.sh]
+  -h, --help                       Print help
+  -V, --version                    Print version
 ```
 
 ### Cron

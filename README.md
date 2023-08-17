@@ -91,6 +91,7 @@ export default {
     });
   }
 }
+```
 
 ```bash
 $ curl https://ip.willow.sh

@@ -17,6 +17,16 @@ curl -sL -o shire https://github.com/ghostdevv/shire/releases/latest/download/sh
   && sudo chown root:root /usr/local/bin/shire
 ```
 
+### Cron
+
+Shire is intended to be run as a cron job on linux, an example of that could be:
+
+```
+0 0 * * * /bin/bash /usr/local/bin/shire -k CF_API_KEY -z ZONE_ID -r RECORDS
+```
+
+See [Usage](#usage) for more information.
+
 ## Usage
 
 ```bash
@@ -34,21 +44,13 @@ Options:
   -V, --version                    Print version
 ```
 
-### Cron
-
-Shire is intended to be run as a cron job on linux, here is an example cron configuration:
-
-```
-0 0 * * * /bin/bash /usr/local/bin/shire -k CF_API_KEY -z ZONE_ID -r RECORDS
-```
-
 ### Example
 
 If we wanted to update the record `test` we could do
 
 ```bash
 shire --key CF_API_KEY --zone-id bab32631af40d574ag246741013k40z3 --records test
-# or
+# or use the shorthand args
 shire -k CF_API_KEY -z bab32631af40d574ag246741013k40z3 -r test
 ```
 
@@ -68,7 +70,29 @@ To get your Zone's Id visit your domain on the [Cloudflare Dashboard](https://da
 
 ![](./.github/zone-id.webp)
 
-## Plans
+### Changing IP resolver
 
-- [ ] Support IPv6
-- [ ] Configurable IP resolver
+By default shire uses `https://ip.willow.sh`, a [cloudflare worker](https://workers.cloudflare.com/) run by me. You can pass your own URL that returns a text response with your ipv4 address:
+
+```bash
+$ shire --ip-resolver "https://ip.willow.sh"
+```
+
+I recommend you host your own [cloudflare worker](https://workers.cloudflare.com/) to make sure you can own & audit all the code you are running. However, you are more than welcome to use [mine](https://ip.willow.sh) if you like:
+
+```js
+export default {
+  /** @param {Request} request */
+  fetch(request) {
+    return new Response(request.headers.get('cf-connecting-ip'), {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      }
+    });
+  }
+}
+
+```bash
+$ curl https://ip.willow.sh
+140.82.121.3
+```

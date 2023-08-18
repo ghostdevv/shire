@@ -1,6 +1,6 @@
 [package]
 name = "shire"
-version = "1.0.1"
+version = "1.1.0"
 authors = ["Willow GHOST <ghostdevbusiness@gmail.com> (willow.sh)"]
 description = "Shire is a simple no fuss ddns client for Cloudflare"
 license = "MIT"

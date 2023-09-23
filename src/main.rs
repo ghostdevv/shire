@@ -47,12 +47,18 @@ async fn main() -> Result<()> {
 
     println!("Updating records...");
     for record_name in args.records {
-        let record_id = records
-            .get(&record_name)
-            .expect(&format!("Unable to find record \"{}\"", record_name));
+        let record_id = records.get(&record_name);
 
-        println!("  Updating \"{}\" with ip \"{}\"", record_name, ip);
-        records::set_ip(&args.zone_id, &record_id, &ip, &args.key).await?;
+        match record_id {
+            None => {
+                println!("  Creating record \"{}\" with ip \"{}\"", record_name, ip);
+                records::create_record(&args.zone_id, &record_name, &ip, &args.key).await?;
+            }
+            Some(record_id) => {
+                println!("  Updating \"{}\" with ip \"{}\"", record_name, ip);
+                records::set_ip(&args.zone_id, &record_id, &ip, &args.key).await?;
+            }
+        }
     }
 
     println!("Done!");

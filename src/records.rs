@@ -12,7 +12,6 @@ struct Record {
 
 #[derive(Deserialize, Debug)]
 struct RecordResponse {
-    success: bool,
     errors: Option<Vec<cloudflare::APIError>>,
     result: Option<Vec<Record>>,
 }
@@ -33,8 +32,8 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
         .json::<RecordResponse>()
         .await?;
 
-    if !response.success {
-        for error in response.errors.unwrap() {
+    if let Some(errors) = response.errors {
+        for error in errors {
             println!("  ERROR({}): {}", error.code, error.message);
         }
 
@@ -80,12 +79,12 @@ pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Resu
         .json::<cloudflare::BaseResponse>()
         .await?;
 
-    if !response.success {
-        for error in response.errors.unwrap() {
+    if let Some(errors) = response.errors {
+        for error in errors {
             println!("  ERROR({}): {}", error.code, error.message);
         }
 
-        return Err(eyre!("Failed to set ip"));
+        return Err(eyre!("Failed to get records"));
     }
 
     Ok(())

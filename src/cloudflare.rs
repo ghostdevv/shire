@@ -8,6 +8,5 @@ pub struct APIError {
 
 #[derive(Deserialize, Debug)]
 pub struct BaseResponse {
-    pub success: bool,
     pub errors: Option<Vec<APIError>>,
 }

@@ -13,7 +13,7 @@ If you're using linux you can use the following command to install it easily:
 ```bash
 curl -sL -o shire https://github.com/ghostdevv/shire/releases/latest/download/shire-linux-amd64 \
   && chmod +x shire \
-  && sudo mv shire /usr/local/bin \
+  && sudo mv -f shire /usr/local/bin \
   && sudo chown root:root /usr/local/bin/shire
 ```
 

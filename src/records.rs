@@ -1,5 +1,5 @@
 use crate::cloudflare;
-use color_eyre::eyre::{eyre, Result};
+use color_eyre::eyre::Result;
 use serde::Deserialize;
 use std::collections::HashMap;
 
@@ -32,13 +32,7 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
         .json::<RecordResponse>()
         .await?;
 
-    if let Some(errors) = response.errors {
-        for error in errors {
-            println!("  ERROR({}): {}", error.code, error.message);
-        }
-
-        return Err(eyre!("Failed to get records"));
-    }
+    cloudflare::assert_cf_errors(&response.errors, String::from("Failed to get records"))?;
 
     let map = response
         .result
@@ -79,13 +73,7 @@ pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Resu
         .json::<cloudflare::BaseResponse>()
         .await?;
 
-    if let Some(errors) = response.errors {
-        for error in errors {
-            println!("  ERROR({}): {}", error.code, error.message);
-        }
-
-        return Err(eyre!("Failed to get records"));
-    }
+    cloudflare::assert_cf_errors(&response.errors, String::from("Failed to set ip"))?;
 
     Ok(())
 }

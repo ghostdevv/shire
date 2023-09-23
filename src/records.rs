@@ -1,6 +1,7 @@
 use crate::cloudflare;
 use color_eyre::eyre::Result;
 use serde::Deserialize;
+use serde_json::json;
 use std::collections::HashMap;
 
 #[derive(Deserialize, Debug)]
@@ -59,13 +60,40 @@ pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Resu
         zone_id, record_id
     );
 
-    let mut body = HashMap::new();
-    body.insert("content", ip);
-
     let client = reqwest::Client::new();
 
     let response = client
         .patch(endpoint)
+        .header("Authorization", format!("Bearer {}", key))
+        .json(&json!({ "content": ip }))
+        .send()
+        .await?
+        .json::<cloudflare::BaseResponse>()
+        .await?;
+
+    cloudflare::assert_cf_errors(&response.errors, String::from("Failed to set ip"))?;
+
+    Ok(())
+}
+
+pub async fn create_record(zone_id: &str, name: &str, ip: &str, key: &str) -> Result<()> {
+    let endpoint = format!(
+        "https://api.cloudflare.com/client/v4/zones/{}/dns_records",
+        zone_id
+    );
+
+    let body = json!({
+        "comment": "created by shire",
+        "proxied": false,
+        "content": ip,
+        "type": "A",
+        "name": name
+    });
+
+    let client = reqwest::Client::new();
+
+    let response = client
+        .post(endpoint)
         .header("Authorization", format!("Bearer {}", key))
         .json(&body)
         .send()
@@ -73,7 +101,10 @@ pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Resu
         .json::<cloudflare::BaseResponse>()
         .await?;
 
-    cloudflare::assert_cf_errors(&response.errors, String::from("Failed to set ip"))?;
+    cloudflare::assert_cf_errors(
+        &response.errors,
+        format!("Failed to create new record \"{name}\""),
+    )?;
 
     Ok(())
 }

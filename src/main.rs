@@ -1,6 +1,7 @@
 use clap::Parser;
 use color_eyre::eyre::Result;
 
+mod cloudflare;
 mod ip;
 mod records;
 

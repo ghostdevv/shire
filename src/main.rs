@@ -4,6 +4,7 @@ use color_eyre::eyre::Result;
 mod cloudflare;
 mod ip;
 mod records;
+mod utils;
 
 #[derive(Parser, Debug)]
 #[command(version, about, author)]

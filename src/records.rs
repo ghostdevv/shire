@@ -1,4 +1,4 @@
-use crate::cloudflare;
+use crate::{cloudflare, utils};
 use color_eyre::eyre::Result;
 use serde::Deserialize;
 use serde_json::json;
@@ -27,6 +27,7 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
 
     let response = client
         .get(endpoint)
+        .header("User-Agent", utils::get_ua_header())
         .header("Authorization", format!("Bearer {}", key))
         .send()
         .await?
@@ -64,6 +65,7 @@ pub async fn set_ip(zone_id: &str, record_id: &str, ip: &str, key: &str) -> Resu
 
     let response = client
         .patch(endpoint)
+        .header("User-Agent", utils::get_ua_header())
         .header("Authorization", format!("Bearer {}", key))
         .json(&json!({ "content": ip }))
         .send()
@@ -94,6 +96,7 @@ pub async fn create_record(zone_id: &str, name: &str, ip: &str, key: &str) -> Re
 
     let response = client
         .post(endpoint)
+        .header("User-Agent", utils::get_ua_header())
         .header("Authorization", format!("Bearer {}", key))
         .json(&body)
         .send()

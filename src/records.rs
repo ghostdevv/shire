@@ -5,9 +5,41 @@ use serde_json::json;
 use std::collections::HashMap;
 
 #[derive(Deserialize, Debug)]
+struct Zone {
+    name: String,
+}
+
+#[derive(Deserialize, Debug)]
+struct ZoneResponse {
+    errors: Option<Vec<cloudflare::APIError>>,
+    result: Option<Zone>,
+}
+
+async fn get_zone(zone_id: &str, key: &str) -> Result<Zone> {
+    let endpoint = format!(
+        "https://api.cloudflare.com/client/v4/zones/{}",
+        zone_id
+    );
+
+    let client = reqwest::Client::new();
+
+    let response = client
+        .get(endpoint)
+        .header("User-Agent", utils::get_ua_header())
+        .header("Authorization", format!("Bearer {}", key))
+        .send()
+        .await?
+        .json::<ZoneResponse>()
+        .await?;
+
+    cloudflare::assert_cf_errors(&response.errors, String::from("Failed to get zone"))?;
+
+    Ok(response.result.unwrap())
+}
+
+#[derive(Deserialize, Debug)]
 struct Record {
     id: String,
-    zone_name: String,
     name: String,
 }
 
@@ -25,7 +57,7 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
 
     let client = reqwest::Client::new();
 
-    let response = client
+    let records_response = client
         .get(endpoint)
         .header("User-Agent", utils::get_ua_header())
         .header("Authorization", format!("Bearer {}", key))
@@ -34,9 +66,11 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
         .json::<RecordResponse>()
         .await?;
 
-    cloudflare::assert_cf_errors(&response.errors, String::from("Failed to get records"))?;
+    cloudflare::assert_cf_errors(&records_response.errors, String::from("Failed to get records"))?;
 
-    let map = response
+    let zone = get_zone(zone_id, key).await?;
+
+    let map = records_response
         .result
         // It's safe to unwrap this here as we've already checked for errors
         // in the future I might try and figure out how to type this better
@@ -45,7 +79,7 @@ pub async fn get_records(zone_id: &str, key: &str) -> Result<HashMap<String, Str
         .map(|record| {
             let parsed_name = record
                 .name
-                .trim_end_matches(&format!(".{}", record.zone_name))
+                .trim_end_matches(&format!(".{}", zone.name))
                 .to_owned();
 
             (parsed_name, record.id.to_owned())

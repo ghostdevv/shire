@@ -46,21 +46,26 @@ async fn main() -> Result<()> {
     println!("Resolving IPv4 address...");
     let ip = ip::get_ip(&args.ip_resolver).await?;
 
-    println!("Updating records...");
-    for record_name in args.records {
-        let record_id = records.get(&record_name);
+    println!("Checking records...");
+    let mut updates_body = records::UpdateRecordsBodyBuilder::new(ip.to_owned());
 
-        match record_id {
+    for record_name in args.records {
+        let record = records.get(&record_name);
+
+        match record {
             None => {
-                println!("  Creating record \"{}\" with ip \"{}\"", record_name, ip);
-                records::create_record(&args.zone_id, &record_name, &ip, &args.key).await?;
+                println!("  Creating: \"{}\" with ip \"{}\"", record_name, ip);
+                updates_body.create(record_name);
             }
-            Some(record_id) => {
-                println!("  Updating \"{}\" with ip \"{}\"", record_name, ip);
-                records::set_ip(&args.zone_id, &record_id, &ip, &args.key).await?;
+            Some(record) => {
+                println!("  Updating: \"{}\" with ip \"{}\"", record_name, ip);
+                updates_body.update(record.id.to_owned(), record.name.to_owned(), record.comment.to_owned());
             }
         }
     }
+
+    println!("Saving changes...");
+    records::update_records(&args.zone_id, &args.key, &updates_body).await?;
 
     println!("Done!");
     Ok(())

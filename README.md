@@ -17,15 +17,58 @@ curl -sL -o shire https://github.com/ghostdevv/shire/releases/latest/download/sh
   && sudo chown root:root /usr/local/bin/shire
 ```
 
-### Cron
+### Running Regularly
 
-Shire is intended to be run as a cron job on linux, an example of that could be:
+You can run shire by invoking it directly `shire --help`. However it's really designed to run on a schedule, for example using a systemd timer or cron job.
 
+#### Systemd Timer
+
+The recommended way to run shire regularly is with a systemd timer, as it has the best observability options. You need to create both a `shire.service` and `shire.timer` file.
+
+Create the following file in `/etc/systemd/system/shire.service`, replacing `<cloudflare-token>` and `<options>` with your values.
+
+```ini
+[Unit]
+Description=Shire DDNS Client for Cloudflare
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+Environment="CLOUDFLARE_API_TOKEN=<cloudflare-token>"
+ExecStart=/usr/local/bin/shire <options>
 ```
-0 0 * * * /bin/bash /usr/local/bin/shire -k CF_API_KEY -z ZONE_ID -r RECORDS
+
+Then create the following file in `/etc/systemd/system/shire.timer`.
+
+```ini
+[Unit]
+Description=Shire DDNS Client for Cloudflare timer
+
+[Timer]
+OnCalendar=daily
+Persistent=true
+
+[Install]
+WantedBy=timers.target
 ```
 
-See [Usage](#usage) for more information.
+Finally run the following.
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable shire.timer
+```
+
+The timer will run daily, but you can edit that to your liking. If you want to run it manually, you can run `sudo systemctl start shire.service`, and check the logs with `sudo systemctl status shire.service`/`journalctl -u shire.service`.
+
+#### Cron
+
+Replace `<options>` with your options.
+
+```bash
+0 0 * * * /bin/bash /usr/local/bin/shire <options>
+```
 
 ## Usage
 

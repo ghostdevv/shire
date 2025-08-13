@@ -57,7 +57,7 @@ Finally run the following.
 
 ```bash
 sudo systemctl daemon-reload
-sudo systemctl enable shire.timer
+sudo systemctl enable shire.timer --now
 ```
 
 The timer will run daily, but you can edit that to your liking. If you want to run it manually, you can run `sudo systemctl start shire.service`, and check the logs with `sudo systemctl status shire.service`/`journalctl -u shire.service`.

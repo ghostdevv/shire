@@ -62,7 +62,7 @@ You can generate an API Key by visiting the [Cloudflare Dashboard](https://dash.
 
 ![](./.github/cloudflare-api-key.webp)
 
-Add as many zones as you are using with shire, or allow access to all zones. 
+Add as many zones as you are using with shire, or allow access to all zones.
 
 ### Zone Id
 
@@ -82,15 +82,15 @@ I recommend you host your own [cloudflare worker](https://workers.cloudflare.com
 
 ```js
 export default {
-  /** @param {Request} request */
-  fetch(request) {
-    return new Response(request.headers.get('cf-connecting-ip'), {
-      headers: {
-        'Access-Control-Allow-Origin': '*',
-      }
-    });
-  }
-}
+	/** @param {Request} request */
+	fetch(request) {
+		return new Response(request.headers.get('cf-connecting-ip'), {
+			headers: {
+				'Access-Control-Allow-Origin': '*',
+			},
+		});
+	},
+};
 ```
 
 ```bash

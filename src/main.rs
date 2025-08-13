@@ -59,7 +59,11 @@ async fn main() -> Result<()> {
             }
             Some(record) => {
                 println!("  Updating: \"{}\" with ip \"{}\"", record_name, ip);
-                updates_body.update(record.id.to_owned(), record.name.to_owned(), record.comment.to_owned());
+                updates_body.update(
+                    record.id.to_owned(),
+                    record.name.to_owned(),
+                    record.comment.to_owned(),
+                );
             }
         }
     }

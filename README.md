@@ -38,11 +38,14 @@ Usage: shire [OPTIONS] --zone-id <ZONE_ID> --key <KEY>
 Options:
   -r, --records <RECORDS>          Comma seperated list of the record names to update
   -z, --zone-id <ZONE_ID>          The Cloudflare Zone Id for your domain
-  -k, --key <KEY>                  Your Cloudflare API key
-  -i, --ip-resolver <IP_RESOLVER>  The IP resolver url to use, this defaults to ip.willow.sh [default: https://ip.willow.sh]
+  -k, --key <KEY>                  Your Cloudflare API token [env: CLOUDFLARE_API_TOKEN=]
+  -i, --ip-resolver <IP_RESOLVER>  The IP resolver url to use [default: https://ip.willow.sh]
   -h, --help                       Print help
   -V, --version                    Print version
 ```
+
+> [!WARNING]
+> If possible, please use the `CLOUDFLARE_API_TOKEN` environment variable instead of the `--key` flag.
 
 ### Example
 

@@ -19,7 +19,7 @@ struct Args {
     #[arg(long, short, help = "The Cloudflare Zone Id for your domain")]
     zone_id: String,
 
-    #[arg(long, short, help = "Your Cloudflare API key")]
+    #[arg(long, short, env = "CLOUDFLARE_API_TOKEN", help = "Your Cloudflare API token")]
     key: String,
 
     #[arg(
